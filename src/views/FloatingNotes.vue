@@ -28,7 +28,7 @@ onMounted(async () => {
   // Small delay to let notes load before spawning
   setTimeout(() => {
     spawnCard()
-    spawnInterval = setInterval(spawnCard, 2500)
+    spawnInterval = setInterval(spawnCard, store.spawnInterval)
   }, 200)
 })
 
@@ -44,7 +44,7 @@ function spawnCard() {
   if (!pool.length) return
 
   const note = pool[Math.floor(Math.random() * pool.length)]
-  const duration = 12 + Math.random() * 13
+  const duration = store.minDuration + Math.random() * (store.maxDuration - store.minDuration)
   const card: FloatingCard = {
     id: idCounter++,
     note,

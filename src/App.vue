@@ -4,7 +4,7 @@ import { open } from '@tauri-apps/plugin-dialog'
 import { load } from '@tauri-apps/plugin-store'
 import { invoke } from '@tauri-apps/api/core'
 import { store, type NoteEntry } from './store/notes'
-import { PencilIcon, LayersIcon } from 'lucide-vue-next'
+import { PencilIcon, LayersIcon, SettingsIcon } from 'lucide-vue-next'
 
 async function refreshNotes() {
   if (!store.folderPath) return
@@ -19,6 +19,13 @@ async function refreshNotes() {
 onMounted(async () => {
   const appStore = await load('settings.json', { defaults: {} })
   const savedFolder = await appStore.get<string>('folderPath')
+  const minDuration = await appStore.get<number>('minDuration')
+  const maxDuration = await appStore.get<number>('maxDuration')
+  const spawnInterval = await appStore.get<number>('spawnInterval')
+
+  if (minDuration != null) store.minDuration = minDuration
+  if (maxDuration != null) store.maxDuration = maxDuration
+  if (spawnInterval != null) store.spawnInterval = spawnInterval
 
   if (savedFolder) {
     store.folderPath = savedFolder
@@ -49,6 +56,9 @@ onMounted(async () => {
         <RouterLink to="/floating" class="btn btn-ghost btn-xs gap-1">
           <LayersIcon :size="13" />
           <span>float</span>
+        </RouterLink>
+        <RouterLink to="/settings" class="btn btn-ghost btn-xs gap-1">
+          <SettingsIcon :size="13" />
         </RouterLink>
       </div>
     </nav>
