@@ -25,8 +25,11 @@ onMounted(async () => {
   await win.setResizable(true)
   await win.maximize()
   await props.refreshNotes()
-  spawnCard()
-  spawnInterval = setInterval(spawnCard, 2500)
+  // Small delay to let notes load before spawning
+  setTimeout(() => {
+    spawnCard()
+    spawnInterval = setInterval(spawnCard, 2500)
+  }, 200)
 })
 
 onBeforeUnmount(() => {
