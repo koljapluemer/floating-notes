@@ -73,7 +73,7 @@ function editNote(note: NoteEntry) {
     <div
       v-for="card in activeCards"
       :key="card.id"
-      class="floating-card card bg-base-200 shadow-lg w-64 cursor-pointer hover:shadow-xl transition-shadow"
+      class="floating-card card bg-base-200 shadow-lg w-64 cursor-pointer"
       :style="{
         top: card.top,
         animationDuration: `${card.duration}s`,
@@ -130,5 +130,7 @@ function editNote(note: NoteEntry) {
   animation-name: float-across;
   animation-timing-function: linear;
   animation-fill-mode: forwards;
+  will-change: transform;
+  backface-visibility: hidden;
 }
 </style>
