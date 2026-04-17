@@ -4,7 +4,7 @@ import { open } from '@tauri-apps/plugin-dialog'
 import { load } from '@tauri-apps/plugin-store'
 import { invoke } from '@tauri-apps/api/core'
 import { store, type NoteEntry } from './store/notes'
-import { PencilIcon, LayersIcon, SettingsIcon } from 'lucide-vue-next'
+import { PencilIcon, LayersIcon, Grid3X3Icon, SettingsIcon } from 'lucide-vue-next'
 
 async function refreshNotes() {
   if (!store.folderPath) return
@@ -56,6 +56,10 @@ onMounted(async () => {
         <RouterLink to="/floating" class="btn btn-ghost btn-xs gap-1">
           <LayersIcon :size="13" />
           <span>float</span>
+        </RouterLink>
+        <RouterLink to="/grid" class="btn btn-ghost btn-xs gap-1">
+          <Grid3X3Icon :size="13" />
+          <span>grid</span>
         </RouterLink>
         <RouterLink to="/settings" class="btn btn-ghost btn-xs gap-1">
           <SettingsIcon :size="13" />
