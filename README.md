@@ -6,21 +6,17 @@ The main screen floats notes across the window. Settings controls the notes fold
 
 ## Dev
 
-```sh
-npm install
-npm run tauri dev
-```
-
-## Build
+Requires Rust, Node.js and [just](https://github.com/casey/just).
 
 ```sh
-npm run tauri build
+just deps   # system libraries (apt on Ubuntu, dnf on Fedora); run automatically if missing
+just dev    # run with hot reload
 ```
 
-Output: `src-tauri/target/release/bundle/`
-
-## Install (Linux)
+## Install (Ubuntu / Fedora)
 
 ```sh
-sudo dpkg -i src-tauri/target/release/bundle/deb/floating-notes_*.deb
+just reinstall
 ```
+
+Builds a `.deb` or `.rpm` for the current distro, removes any installed copy, and installs the new one. `just uninstall` removes it.
