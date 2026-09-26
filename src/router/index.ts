@@ -1,17 +1,18 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import AddNote from '../views/AddNote.vue'
 import FloatingNotes from '../views/FloatingNotes.vue'
-import GridNotes from '../views/GridNotes.vue'
 import Settings from '../views/Settings.vue'
+import { store } from '../store/notes'
 
 const router = createRouter({
   history: createWebHistory(),
   routes: [
-    { path: '/', component: AddNote },
-    { path: '/floating', component: FloatingNotes },
-    { path: '/grid', component: GridNotes },
+    { path: '/', component: FloatingNotes },
     { path: '/settings', component: Settings },
   ],
+})
+
+router.beforeEach((to) => {
+  if (to.path === '/' && !store.folderPath) return '/settings'
 })
 
 export default router

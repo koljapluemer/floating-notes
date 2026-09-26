@@ -1,8 +1,8 @@
 # floating-notes
 
-Markdown note-taking app. Notes are plain `.md` files in a folder you choose.
+Floating note viewer. Notes are JSON files in a folder you choose.
 
-Two screens: a small popup to add/edit notes, and a fullscreen view where notes float across the screen.
+The main screen floats notes across the window. Settings controls the notes folder and animation timing.
 
 ## Dev
 

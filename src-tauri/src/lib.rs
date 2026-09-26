@@ -32,20 +32,6 @@ fn list_notes(folder: String) -> Result<Vec<NoteEntry>, String> {
     Ok(entries)
 }
 
-#[tauri::command]
-fn save_note(folder: String, filename: String, body: String) -> Result<(), String> {
-    let path = Path::new(&folder).join(&filename);
-    let json = serde_json::json!({ "body": body });
-    let content = serde_json::to_string_pretty(&json).map_err(|e| e.to_string())?;
-    fs::write(path, content).map_err(|e| e.to_string())
-}
-
-#[tauri::command]
-fn delete_note(folder: String, filename: String) -> Result<(), String> {
-    let path = Path::new(&folder).join(&filename);
-    fs::remove_file(path).map_err(|e| e.to_string())
-}
-
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
@@ -60,9 +46,8 @@ pub fn run() {
             Ok(())
         })
         .plugin(tauri_plugin_dialog::init())
-        .plugin(tauri_plugin_fs::init())
         .plugin(tauri_plugin_store::Builder::new().build())
-        .invoke_handler(tauri::generate_handler![list_notes, save_note, delete_note])
+        .invoke_handler(tauri::generate_handler![list_notes])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
