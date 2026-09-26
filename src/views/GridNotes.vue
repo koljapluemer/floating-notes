@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue'
-import { useRouter } from 'vue-router'
 import { getCurrentWindow } from '@tauri-apps/api/window'
 import { store, type NoteEntry } from '../store/notes'
 import { renderMarkdown } from '../utils/markdown'
@@ -18,14 +17,13 @@ interface GridCard {
 }
 
 const sizeCycle: GridSize[] = ['1x1', '1x2', '2x1', '2x2']
-const router = useRouter()
 const filterInput = ref(store.filterText)
 const shuffleSalt = ref(Date.now())
 
 const filteredNotes = computed(() => {
   const filter = store.filterText.toLowerCase()
   return store.notes.filter(n =>
-    !filter || n.content.toLowerCase().includes(filter)
+    !filter || n.body.toLowerCase().includes(filter)
   )
 })
 
@@ -33,7 +31,7 @@ const gridCards = computed<GridCard[]>(() => {
   return filteredNotes.value
     .map(note => ({
       note,
-      score: seededScore(`${note.filename}:${note.content}:${store.filterText}`, shuffleSalt.value),
+      score: seededScore(`${note.filename}:${note.body}:${store.filterText}`, shuffleSalt.value),
     }))
     .sort((a, b) => a.score - b.score)
     .map(({ note }, index) => {
@@ -66,11 +64,6 @@ function onFilterInput() {
   store.filterText = filterInput.value
 }
 
-function editNote(note: NoteEntry) {
-  store.editingNote = note
-  router.push('/')
-}
-
 function seededScore(value: string, salt: number): number {
   let hash = salt >>> 0
   for (let i = 0; i < value.length; i++) {
@@ -85,7 +78,7 @@ function seededScore(value: string, salt: number): number {
   <div class="grid-stage">
     <div class="grid-scroll">
       <div v-if="gridCards.length" class="notes-grid">
-        <button
+        <div
           v-for="card in gridCards"
           :key="card.id"
           class="grid-note card bg-base-200 shadow-md text-left"
@@ -94,15 +87,14 @@ function seededScore(value: string, salt: number): number {
             gridColumn: `span ${card.colSpan}`,
             gridRow: `span ${card.rowSpan}`,
           }"
-          @click="editNote(card.note)"
         >
           <div class="card-body p-3">
             <div
               class="prose prose-sm max-w-none text-xs"
-              v-html="renderMarkdown(card.note.content)"
+              v-html="renderMarkdown(card.note.body)"
             />
           </div>
-        </button>
+        </div>
       </div>
       <div v-else class="empty-grid text-sm opacity-60">
         no notes
@@ -148,7 +140,6 @@ function seededScore(value: string, salt: number): number {
   min-width: 0;
   min-height: 100%;
   border-radius: 8px;
-  cursor: pointer;
 }
 
 .grid-note :deep(.card-body) {

@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { ref, onMounted, onBeforeUnmount } from 'vue'
-import { useRouter } from 'vue-router'
 import { getCurrentWindow } from '@tauri-apps/api/window'
 import { store, type NoteEntry } from '../store/notes'
 import { renderMarkdown } from '../utils/markdown'
@@ -14,7 +13,6 @@ interface FloatingCard {
   duration: number
 }
 
-const router = useRouter()
 const activeCards = ref<FloatingCard[]>([])
 const filterInput = ref(store.filterText)
 let idCounter = 0
@@ -39,7 +37,7 @@ onBeforeUnmount(() => {
 function spawnCard() {
   const filter = store.filterText.toLowerCase()
   const pool = store.notes.filter(n =>
-    !filter || n.content.toLowerCase().includes(filter)
+    !filter || n.body.toLowerCase().includes(filter)
   )
   if (!pool.length) return
 
@@ -61,11 +59,6 @@ function spawnCard() {
 function onFilterInput() {
   store.filterText = filterInput.value
 }
-
-function editNote(note: NoteEntry) {
-  store.editingNote = note
-  router.push('/')
-}
 </script>
 
 <template>
@@ -73,17 +66,16 @@ function editNote(note: NoteEntry) {
     <div
       v-for="card in activeCards"
       :key="card.id"
-      class="floating-card card bg-base-200 shadow-lg w-64 cursor-pointer"
+      class="floating-card card bg-base-200 shadow-lg w-64"
       :style="{
         top: card.top,
         animationDuration: `${card.duration}s`,
       }"
-      @click="editNote(card.note)"
     >
       <div class="card-body p-3">
         <div
           class="prose prose-sm max-w-none text-xs"
-          v-html="renderMarkdown(card.note.content)"
+          v-html="renderMarkdown(card.note.body)"
         />
       </div>
     </div>

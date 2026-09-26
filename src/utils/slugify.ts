@@ -9,5 +9,5 @@ export function slugifyToFilename(content: string): string {
     .replace(/-+$/, '')
 
   const slug = base || 'note'
-  return `${slug}-${Date.now()}.md`
+  return `${slug}-${Date.now()}.json`
 }

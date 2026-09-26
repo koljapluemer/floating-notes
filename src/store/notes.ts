@@ -2,13 +2,12 @@ import { reactive } from 'vue'
 
 export interface NoteEntry {
   filename: string
-  content: string
+  body: string
 }
 
 export const store = reactive({
   folderPath: '' as string,
   notes: [] as NoteEntry[],
-  editingNote: null as NoteEntry | null,
   filterText: '' as string,
   // Float settings
   minDuration: 12 as number,      // seconds (fast end)

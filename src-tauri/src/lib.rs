@@ -4,7 +4,7 @@ use std::path::Path;
 #[derive(serde::Serialize, serde::Deserialize)]
 pub struct NoteEntry {
     filename: String,
-    content: String,
+    body: String,
 }
 
 #[tauri::command]
@@ -15,10 +15,12 @@ fn list_notes(folder: String) -> Result<Vec<NoteEntry>, String> {
         .filter_map(|entry| {
             let entry = entry.ok()?;
             let path = entry.path();
-            if path.extension()?.to_str()? == "md" {
+            if path.extension()?.to_str()? == "json" {
                 let filename = path.file_name()?.to_str()?.to_string();
-                let content = fs::read_to_string(&path).ok()?;
-                Some(NoteEntry { filename, content })
+                let raw = fs::read_to_string(&path).ok()?;
+                let json: serde_json::Value = serde_json::from_str(&raw).ok()?;
+                let body = json.get("body")?.as_str()?.to_string();
+                Some(NoteEntry { filename, body })
             } else {
                 None
             }
@@ -31,8 +33,10 @@ fn list_notes(folder: String) -> Result<Vec<NoteEntry>, String> {
 }
 
 #[tauri::command]
-fn save_note(folder: String, filename: String, content: String) -> Result<(), String> {
+fn save_note(folder: String, filename: String, body: String) -> Result<(), String> {
     let path = Path::new(&folder).join(&filename);
+    let json = serde_json::json!({ "body": body });
+    let content = serde_json::to_string_pretty(&json).map_err(|e| e.to_string())?;
     fs::write(path, content).map_err(|e| e.to_string())
 }
 
